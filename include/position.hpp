@@ -119,6 +119,63 @@ public:
     // Full board mask (all playable cells)
     static constexpr uint64_t BOARD_MASK = BOTTOM_MASK * ((1ULL << HEIGHT) - 1);
 
+    // -------------------------------------------------------------------------
+    // Core Game Methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * can_play(col) - Check if a column has room for another piece.
+     * 
+     * A column is full when the TOP playable cell (row 5) is occupied.
+     * We check this by ANDing the mask with top_mask(col).
+     * 
+     * Returns: true if the column has space, false if full.
+     */
+    bool can_play(int col) const;
+
+    /**
+     * make_move(col) - Drop a piece into the given column.
+     * 
+     * THE GRAVITY TRICK (The clever part!):
+     * =============================================================================
+     * 
+     * Instead of looping to find the first empty row, we use binary addition.
+     * 
+     * Step 1: Get just this column's bits from the mask.
+     *         col_bits = mask & column_mask(col)
+     * 
+     * Step 2: Add the bottom bit of the column.
+     *         col_bits + bottom_mask(col)
+     * 
+     * Here's the magic: Adding 1 to a sequence of 1s causes a "carry" that
+     * propagates up until it hits a 0.
+     * 
+     * Example (column 0, with 2 pieces already):
+     *   mask for col0:   0b0000011  (rows 0 and 1 occupied)
+     *   bottom_mask(0):  0b0000001  (row 0)
+     *   Sum:             0b0000100  (the 1 "carried" up to row 2!)
+     * 
+     * The result has a 1 exactly where the new piece should go!
+     * 
+     * Precondition: can_play(col) must be true.
+     */
+    void make_move(int col);
+
+    /**
+     * nb_moves() - Returns the number of moves played so far.
+     */
+    int nb_moves() const { return moves_; }
+
+    /**
+     * get_mask() - Returns the mask bitboard (for debugging/testing).
+     */
+    uint64_t get_mask() const { return mask_; }
+
+    /**
+     * get_position() - Returns the current player's position bitboard.
+     */
+    uint64_t get_position() const { return position_; }
+
 private:
     // -------------------------------------------------------------------------
     // THE TWO CORE BITBOARDS
