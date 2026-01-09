@@ -24,6 +24,7 @@
  */
 
 #include "position.hpp"
+#include "solver.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -85,26 +86,57 @@ void handle_position(Position& pos, const std::string& args) {
 /**
  * handle_go - Handle the "go" command.
  * 
- * For now, this is a placeholder. The actual solver will be added in Phase 3.
+ * Uses the Negamax solver to find the best move!
  */
 void handle_go(Position& pos) {
-    // Check for immediate wins
+    // Check for immediate wins first (fast path)
     for (int col = 0; col < Position::WIDTH; col++) {
         if (pos.can_play(col) && pos.is_winning_move(col)) {
-            std::cout << "bestmove " << (col + 1) << " (immediate win!)\n";
+            std::cout << "bestmove " << (col + 1) << " score WIN (immediate)\n";
             return;
         }
     }
     
-    // Placeholder: just pick the first playable column
+    // Check if game is already over
+    if (pos.nb_moves() == Position::WIDTH * Position::HEIGHT) {
+        std::cout << "Game is a draw - no moves available\n";
+        return;
+    }
+
+    // Use the solver to find the best move
+    Solver solver;
+    int best_col = -1;
+    int best_score = -1000;
+
+    std::cout << "Analyzing...\n";
+
     for (int col = 0; col < Position::WIDTH; col++) {
         if (pos.can_play(col)) {
-            std::cout << "bestmove " << (col + 1) << " (placeholder - no solver yet)\n";
-            return;
+            // Try this move
+            Position next = pos;
+            next.make_move(col);
+
+            // Get the score (negate because we're looking from opponent's view)
+            int score = -solver.solve(next);
+
+            std::cout << "  Column " << (col + 1) << ": score " << score << "\n";
+
+            if (score > best_score) {
+                best_score = score;
+                best_col = col;
+            }
         }
     }
-    
-    std::cout << "No moves available (draw)\n";
+
+    // Output result
+    std::string result;
+    if (best_score > 0) result = "WIN";
+    else if (best_score < 0) result = "LOSE";
+    else result = "DRAW";
+
+    std::cout << "bestmove " << (best_col + 1) << " score " << best_score 
+              << " (" << result << ")\n";
+    std::cout << "Nodes analyzed: " << solver.get_node_count() << "\n";
 }
 
 /**
