@@ -1,5 +1,5 @@
 /**
- * solver.cpp - Negamax Solver with Alpha-Beta Pruning
+ * solver.cpp - Negamax Solver with Alpha-Beta Pruning and Transposition Table
  */
 
 #include "solver.hpp"
@@ -27,11 +27,12 @@ int Solver::solve(const Position& pos) {
 }
 
 /**
- * negamax - The core recursive algorithm with alpha-beta pruning.
+ * negamax - The core recursive algorithm with alpha-beta pruning and TT.
  * 
- * Alpha-beta pruning dramatically reduces the number of positions we need to
- * examine. When we find a move that's "too good" (would be rejected by the
- * opponent), we can stop searching that branch entirely.
+ * TRANSPOSITION TABLE INTEGRATION:
+ * At the start, we check if this position was already evaluated.
+ * If so, we can use the cached value to narrow our bounds.
+ * At the end, we store the result for future lookups.
  */
 int Solver::negamax(Position pos, int alpha, int beta) {
     node_count_++;
@@ -52,6 +53,24 @@ int Solver::negamax(Position pos, int alpha, int beta) {
     // -------------------------------------------------------------------------
     if (pos.nb_moves() >= Position::WIDTH * Position::HEIGHT - 1) {
         return 0;  // Draw (or about to be)
+    }
+
+    // -------------------------------------------------------------------------
+    // TRANSPOSITION TABLE LOOKUP
+    // -------------------------------------------------------------------------
+    // Check if we've seen this position before. If the cached value gives us
+    // useful information, we can narrow our search bounds or return early.
+    uint64_t key = pos.key();
+    int8_t cached_value = tt_.get(key);
+    
+    if (cached_value != 0) {
+        // We found a cached upper bound for this position
+        // The cached value is an upper bound on the true score
+        int max_from_cache = cached_value + Position::WIDTH * Position::HEIGHT / 2 - 1;
+        if (beta > max_from_cache) {
+            beta = max_from_cache;
+            if (alpha >= beta) return beta;  // Prune with cached info!
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -93,6 +112,13 @@ int Solver::negamax(Position pos, int alpha, int beta) {
             }
         }
     }
+
+    // -------------------------------------------------------------------------
+    // TRANSPOSITION TABLE STORE
+    // -------------------------------------------------------------------------
+    // Store the result. We convert alpha to a relative value.
+    // This helps future searches prune earlier.
+    tt_.put(key, static_cast<int8_t>(alpha - Position::WIDTH * Position::HEIGHT / 2 + 1));
 
     return alpha;
 }

@@ -42,6 +42,7 @@
 #define SOLVER_HPP
 
 #include "position.hpp"
+#include "transposition.hpp"
 
 class Solver {
 public:
@@ -84,6 +85,9 @@ private:
 
     // Counter for positions analyzed
     unsigned long long node_count_ = 0;
+
+    // Transposition table for caching evaluated positions
+    TranspositionTable tt_;
 };
 
 #endif // SOLVER_HPP
