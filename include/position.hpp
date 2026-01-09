@@ -205,6 +205,18 @@ public:
      */
     bool is_winning_move(int col) const;
 
+    /**
+     * display() - Print the board to stdout for debugging.
+     * 
+     * Shows the board with:
+     *   'X' for current player's pieces
+     *   'O' for opponent's pieces  
+     *   '.' for empty cells
+     * 
+     * Prints column numbers at the bottom (1-7).
+     */
+    void display() const;
+
 private:
     // -------------------------------------------------------------------------
     // THE TWO CORE BITBOARDS

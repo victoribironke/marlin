@@ -103,3 +103,45 @@ bool Position::is_winning_move(int col) const {
     // Check if this creates a 4-in-a-row
     return alignment(new_position);
 }
+
+/**
+ * display - Print the board to stdout for debugging.
+ * 
+ * How it works:
+ * - We loop through each row (from top row 5 down to bottom row 0)
+ * - For each cell, we check if it has a piece by testing the bit
+ * - If occupied, we check whose piece it is (current player or opponent)
+ */
+void Position::display() const {
+    // Get opponent's pieces (everyone's pieces XOR current player's pieces)
+    uint64_t opponent = mask_ ^ position_;
+    
+    std::cout << "\n";
+    
+    // Print from top row (5) to bottom row (0)
+    for (int row = HEIGHT - 1; row >= 0; row--) {
+        std::cout << "| ";
+        for (int col = 0; col < WIDTH; col++) {
+            // Calculate the bit index for this cell
+            int bit = col * (HEIGHT + 1) + row;
+            uint64_t cell_mask = 1ULL << bit;
+            
+            if (position_ & cell_mask) {
+                std::cout << "X ";  // Current player's piece
+            } else if (opponent & cell_mask) {
+                std::cout << "O ";  // Opponent's piece
+            } else {
+                std::cout << ". ";  // Empty cell
+            }
+        }
+        std::cout << "|\n";
+    }
+    
+    // Print column numbers
+    std::cout << "+---------------+\n";
+    std::cout << "  1 2 3 4 5 6 7\n\n";
+    
+    // Print some status info
+    std::cout << "Moves played: " << moves_ << "\n";
+    std::cout << "Current player: " << (moves_ % 2 == 0 ? "X" : "O") << "\n";
+}
