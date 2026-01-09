@@ -1,70 +1,98 @@
 /**
- * solver.cpp - Negamax Solver Implementation
+ * solver.cpp - Negamax Solver with Alpha-Beta Pruning
  */
 
 #include "solver.hpp"
 
+// Define the static member (required for linking)
+constexpr int Solver::COLUMN_ORDER[7];
+
 /**
  * solve - Public entry point for the solver.
  * 
- * Resets the node counter and calls negamax.
+ * We initialize alpha to the worst possible score (we're losing as fast as possible)
+ * and beta to the best possible score (we're winning as fast as possible).
+ * These bounds will tighten as we explore the game tree.
  */
 int Solver::solve(const Position& pos) {
     reset_node_count();
-    return negamax(pos);
+    
+    // Initial bounds:
+    // alpha = can't be worse than losing on the very last possible move
+    // beta = can't be better than winning on the next move
+    int alpha = -(Position::WIDTH * Position::HEIGHT) / 2;
+    int beta = (Position::WIDTH * Position::HEIGHT + 1) / 2;
+    
+    return negamax(pos, alpha, beta);
 }
 
 /**
- * negamax - The core recursive algorithm.
+ * negamax - The core recursive algorithm with alpha-beta pruning.
  * 
- * This explores ALL possible game continuations (brute force for now).
- * Later we'll add alpha-beta pruning to make it much faster.
+ * Alpha-beta pruning dramatically reduces the number of positions we need to
+ * examine. When we find a move that's "too good" (would be rejected by the
+ * opponent), we can stop searching that branch entirely.
  */
-int Solver::negamax(Position pos) {
+int Solver::negamax(Position pos, int alpha, int beta) {
     node_count_++;
 
     // -------------------------------------------------------------------------
     // BASE CASE 1: Check if current player can win immediately
     // -------------------------------------------------------------------------
-    for (int col = 0; col < Position::WIDTH; col++) {
+    for (int i = 0; i < Position::WIDTH; i++) {
+        int col = COLUMN_ORDER[i];  // Check center columns first
         if (pos.can_play(col) && pos.is_winning_move(col)) {
-            // Current player wins! Return a high positive score.
-            // The score is based on how many moves are left in the game.
-            // More moves left = faster win = higher score.
-            // Formula: (total_cells - moves_played + 1) / 2
-            // This gives us a value that decreases as the game goes on.
+            // Current player wins! Score based on how fast we win.
             return (Position::WIDTH * Position::HEIGHT + 1 - pos.nb_moves()) / 2;
         }
     }
 
     // -------------------------------------------------------------------------
-    // BASE CASE 2: Check for draw (all columns full)
+    // BASE CASE 2: Check for draw (no moves left = all 42 cells filled)
     // -------------------------------------------------------------------------
-    if (pos.nb_moves() == Position::WIDTH * Position::HEIGHT) {
-        return 0;  // Draw
+    if (pos.nb_moves() >= Position::WIDTH * Position::HEIGHT - 1) {
+        return 0;  // Draw (or about to be)
     }
 
     // -------------------------------------------------------------------------
-    // RECURSIVE CASE: Try all possible moves
+    // OPTIMIZATION: Tighten the upper bound (beta)
     // -------------------------------------------------------------------------
-    int best_score = -1000;  // Start with worst possible score
+    // We can't do better than winning in 2 moves (since we already checked
+    // for immediate wins above). This helps prune more branches.
+    int max_possible = (Position::WIDTH * Position::HEIGHT - 1 - pos.nb_moves()) / 2;
+    if (beta > max_possible) {
+        beta = max_possible;
+        if (alpha >= beta) return beta;  // Prune!
+    }
 
-    for (int col = 0; col < Position::WIDTH; col++) {
+    // -------------------------------------------------------------------------
+    // RECURSIVE CASE: Try all moves with alpha-beta pruning
+    // -------------------------------------------------------------------------
+    for (int i = 0; i < Position::WIDTH; i++) {
+        int col = COLUMN_ORDER[i];  // Try center columns first (move ordering)
+        
         if (pos.can_play(col)) {
-            // Create a copy of the position and make the move
+            // Create a copy and make the move
             Position next = pos;
             next.make_move(col);
 
-            // Recursively evaluate the position from opponent's perspective
-            // The key insight: opponent's score = -our score
-            int score = -negamax(next);
+            // Recursively evaluate from opponent's perspective
+            // Note: We negate and swap alpha/beta bounds
+            int score = -negamax(next, -beta, -alpha);
 
-            // Keep track of the best score we can achieve
-            if (score > best_score) {
-                best_score = score;
+            // ALPHA-BETA PRUNING CHECK
+            if (score >= beta) {
+                // This move is "too good" - opponent won't allow this line
+                // We can stop searching this branch entirely!
+                return score;  // Fail-high (beta cutoff)
+            }
+
+            // Update alpha (our guaranteed minimum score)
+            if (score > alpha) {
+                alpha = score;
             }
         }
     }
 
-    return best_score;
+    return alpha;
 }
