@@ -56,3 +56,50 @@ void Position::make_move(int col) {
     // STEP 3: Increment move counter
     moves_++;
 }
+
+/**
+ * alignment - Helper function to check if a position has 4-in-a-row.
+ * 
+ * This uses the bitshift technique to detect alignments:
+ * 1. Shift the position by the direction offset
+ * 2. AND with original - now we have bits where 2-in-a-row exist
+ * 3. Shift that result by 2x the offset
+ * 4. AND again - now we have bits where 4-in-a-row exist
+ */
+static bool alignment(uint64_t pos) {
+    // Check HORIZONTAL (columns are 7 bits apart)
+    uint64_t m = pos & (pos >> 7);
+    if (m & (m >> 14)) return true;
+
+    // Check VERTICAL (rows are 1 bit apart)
+    m = pos & (pos >> 1);
+    if (m & (m >> 2)) return true;
+
+    // Check DIAGONAL / (going up-right = row + column = 8 bits)
+    m = pos & (pos >> 8);
+    if (m & (m >> 16)) return true;
+
+    // Check DIAGONAL \ (going up-left = row - column = 6 bits)
+    m = pos & (pos >> 6);
+    if (m & (m >> 12)) return true;
+
+    return false;
+}
+
+/**
+ * is_winning_move - Check if playing in a column would create a 4-in-a-row.
+ * 
+ * We simulate adding the piece to the current player's position and check
+ * if that creates a winning alignment.
+ */
+bool Position::is_winning_move(int col) const {
+    // Calculate where the new piece would land
+    // The piece lands at the first empty cell in this column
+    uint64_t new_piece = (mask_ + bottom_mask(col)) & column_mask(col);
+    
+    // Create a hypothetical position with the new piece added
+    uint64_t new_position = position_ | new_piece;
+    
+    // Check if this creates a 4-in-a-row
+    return alignment(new_position);
+}

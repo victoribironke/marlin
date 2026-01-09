@@ -176,6 +176,35 @@ public:
      */
     uint64_t get_position() const { return position_; }
 
+    /**
+     * is_winning_move(col) - Check if playing in this column wins the game.
+     * 
+     * WIN DETECTION USING BITSHIFTS:
+     * =============================================================================
+     * 
+     * To check for 4-in-a-row, we shift the bitboard against itself and AND the
+     * results. If we get a non-zero result, there's a 4-in-a-row!
+     * 
+     * For HORIZONTAL wins (shift by 7 - one column apart):
+     *   m = pos & (pos >> 7)    // Find adjacent pairs
+     *   if (m & (m >> 14))      // Check if two pairs are adjacent (= 4 in a row)
+     * 
+     * For VERTICAL wins (shift by 1 - one row apart):
+     *   m = pos & (pos >> 1)
+     *   if (m & (m >> 2))
+     * 
+     * For DIAGONAL / wins (shift by 8 - one row + one column):
+     *   m = pos & (pos >> 8)
+     *   if (m & (m >> 16))
+     * 
+     * For DIAGONAL \ wins (shift by 6 - one row - one column):
+     *   m = pos & (pos >> 6)
+     *   if (m & (m >> 12))
+     * 
+     * We check if the OPPONENT just won (they played last move).
+     */
+    bool is_winning_move(int col) const;
+
 private:
     // -------------------------------------------------------------------------
     // THE TWO CORE BITBOARDS
