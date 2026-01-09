@@ -177,6 +177,18 @@ public:
     uint64_t get_position() const { return position_; }
 
     /**
+     * key() - Generate a unique key for this position.
+     * 
+     * The key is used for the transposition table. Two identical board
+     * positions (same pieces in same places, same player's turn) will
+     * have the same key.
+     * 
+     * Formula: position + mask + BOTTOM_MASK
+     * This cleverly encodes both the stone positions AND whose turn it is.
+     */
+    uint64_t key() const { return position_ + mask_ + BOTTOM_MASK; }
+
+    /**
      * is_winning_move(col) - Check if playing in this column wins the game.
      * 
      * WIN DETECTION USING BITSHIFTS:
