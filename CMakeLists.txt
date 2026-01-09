@@ -20,6 +20,7 @@ add_executable(marlin
     src/main.cpp
     src/position.cpp
     src/solver.cpp
+    src/transposition.cpp
 )
 
 # Test executable
