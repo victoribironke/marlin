@@ -15,6 +15,10 @@ constexpr int Solver::COLUMN_ORDER[7];
  * These bounds will tighten as we explore the game tree.
  */
 int Solver::solve(const Position& pos) {
+    return solve(pos, -1);  // -1 means unlimited depth
+}
+
+int Solver::solve(const Position& pos, int max_depth) {
     reset_node_count();
     
     // Initial bounds:
@@ -23,7 +27,7 @@ int Solver::solve(const Position& pos) {
     int alpha = -(Position::WIDTH * Position::HEIGHT) / 2;
     int beta = (Position::WIDTH * Position::HEIGHT + 1) / 2;
     
-    return negamax(pos, alpha, beta);
+    return negamax(pos, alpha, beta, max_depth, 0);
 }
 
 /**
@@ -34,8 +38,11 @@ int Solver::solve(const Position& pos) {
  * If so, we can use the cached value to narrow our bounds.
  * At the end, we store the result for future lookups.
  */
-int Solver::negamax(Position pos, int alpha, int beta) {
+int Solver::negamax(Position pos, int alpha, int beta, int max_depth, int depth) {
     node_count_++;
+
+    // Depth limit reached - return heuristic value of 0 (unknown)
+    if (max_depth >= 0 && depth >= max_depth) return 0;
 
     // -------------------------------------------------------------------------
     // BASE CASE 1: Check if current player can win immediately
@@ -97,7 +104,7 @@ int Solver::negamax(Position pos, int alpha, int beta) {
 
             // Recursively evaluate from opponent's perspective
             // Note: We negate and swap alpha/beta bounds
-            int score = -negamax(next, -beta, -alpha);
+            int score = -negamax(next, -beta, -alpha, max_depth, depth + 1);
 
             // ALPHA-BETA PRUNING CHECK
             if (score >= beta) {
