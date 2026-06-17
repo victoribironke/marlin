@@ -46,6 +46,9 @@
 
 class Solver {
 public:
+    Solver() = default;
+    explicit Solver(size_t tt_size) : tt_(tt_size) {}
+
     /**
      * solve - Find the game-theoretic value of a position.
      * 
@@ -56,6 +59,7 @@ public:
      *              Negative = opponent can force a win
      */
     int solve(const Position& pos);
+    int solve(const Position& pos, int max_depth);
 
     /**
      * get_node_count - Return how many positions were analyzed.
@@ -67,6 +71,11 @@ public:
      * reset_node_count - Reset the counter (call before each solve).
      */
     void reset_node_count() { node_count_ = 0; }
+
+    /**
+     * reset - Clear transposition table and reset node count.
+     */
+    void reset() { tt_.reset(); reset_node_count(); }
 
     // Move ordering: center columns first (better for alpha-beta pruning)
     // Column indices: 3, 2, 4, 1, 5, 0, 6 (center to edges, 0-indexed)
@@ -81,7 +90,7 @@ private:
      * @param beta  Upper bound - worst score opponent will allow
      * @return      Score from current player's perspective
      */
-    int negamax(Position pos, int alpha, int beta);
+    int negamax(Position pos, int alpha, int beta, int max_depth, int depth);
 
     // Counter for positions analyzed
     unsigned long long node_count_ = 0;
