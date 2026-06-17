@@ -2,7 +2,7 @@
 
 A high-performance Connect 4 solver using C++ bitboards, inspired by Stockfish's architecture.
 
-**[▶ Play Online](https://marlin-connect4.vercel.app)** · **[GitHub](https://github.com/victoribironke/marlin)**
+**[▶ Play Online](https://marlin-xi.vercel.app)** · **[GitHub](https://github.com/victoribironke/marlin)**
 
 ## Features
 
@@ -18,13 +18,13 @@ A high-performance Connect 4 solver using C++ bitboards, inspired by Stockfish's
 
 The solver is compiled to WebAssembly and runs entirely in your browser — no server needed.
 
-Visit **[marlin-connect4.vercel.app](https://marlin-connect4.vercel.app)** to play.
+Visit **[marlin-xi.vercel.app](https://marlin-xi.vercel.app/)** to play.
 
-| Difficulty | Search Depth | Description                          |
-| ---------- | ------------ | ------------------------------------ |
-| Easy       | 4 moves      | Makes mistakes, great for beginners  |
-| Medium     | 8 moves      | Solid play, misses deep tactics      |
-| Hard       | Unlimited    | Perfect play — good luck!            |
+| Difficulty | Search Depth | Description                         |
+| ---------- | ------------ | ----------------------------------- |
+| Easy       | 4 moves      | Makes mistakes, great for beginners |
+| Medium     | 8 moves      | Solid play, misses deep tactics     |
+| Hard       | Unlimited    | Perfect play — good luck!           |
 
 ## Project Structure
 
