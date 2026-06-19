@@ -115,6 +115,14 @@ function initGame() {
     gameState.isHumanTurn = false;
   }
 
+  // Track game start
+  if (typeof posthog !== 'undefined') {
+    posthog.capture('game_started', {
+      difficulty: gameState.difficulty,
+      human_player: gameState.humanPlayer === 1 ? 'red' : 'yellow'
+    });
+  }
+
   // Switch screens
   dom.setupScreen.classList.add('hidden');
   dom.gameScreen.classList.remove('hidden');
@@ -455,6 +463,16 @@ function showResult(result, player) {
   dom.overlayTitle.textContent = overlayTitle;
   dom.overlaySubtitle.textContent = overlaySubtitle;
   dom.overlay.classList.remove('hidden');
+
+  // Track game over
+  if (typeof posthog !== 'undefined') {
+    posthog.capture('game_completed', {
+      result: result, // 'win', 'lose', or 'draw'
+      difficulty: gameState.difficulty,
+      human_player: gameState.humanPlayer === 1 ? 'red' : 'yellow',
+      total_moves: api.nbMoves()
+    });
+  }
 }
 
 // ---- Navigation ----
