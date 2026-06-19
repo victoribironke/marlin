@@ -1,166 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marlin — Connect 4 AI</title>
-  <meta name="description" content="Play Connect 4 against Marlin, a perfect AI solver. Challenge yourself against easy, medium, or hard difficulty levels in this classic strategy game.">
-  <meta name="keywords" content="Connect 4, AI, solver, strategy game, Marlin, perfect play">
-  <meta name="author" content="Marlin">
-  <meta name="theme-color" content="#060918">
-  <meta property="og:title" content="Marlin — Connect 4 AI">
-  <meta property="og:description" content="Play Connect 4 against a perfect AI solver. Can you beat Marlin?">
-  <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="app">
-    <!-- Header -->
-    <header id="header">
-      <h1 class="logo">🐟 Marlin</h1>
-      <p class="subtitle">Perfect Connect 4 AI</p>
-      <a href="https://github.com/victoribironke/marlin" target="_blank" rel="noopener noreferrer" class="github-link">
-        <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-        </svg>
-        View on GitHub
-      </a>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marlin — Connect 4 AI</title>
+    <meta
+      name="description"
+      content="Play Connect 4 against Marlin, a perfect AI solver. Challenge yourself against easy, medium, or hard difficulty levels in this classic strategy game."
+    />
+    <meta
+      name="keywords"
+      content="Connect 4, AI, solver, strategy game, Marlin, perfect play"
+    />
+    <meta name="author" content="Marlin" />
+    <meta name="theme-color" content="#060918" />
+    <meta property="og:title" content="Marlin — Connect 4 AI" />
+    <meta
+      property="og:description"
+      content="Play Connect 4 against a perfect AI solver. Can you beat Marlin?"
+    />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-    <!-- Setup Screen -->
-    <div id="setup-screen">
-      <div class="setup-card">
-        <h2 class="setup-title">New Game</h2>
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 
-        <div class="setup-section">
-          <label class="setup-label">Choose Your Side</label>
-          <div class="side-selector">
-            <button class="side-card side-red selected" data-side="1" id="side-red-btn">
-              <span class="side-piece red-piece"></span>
-              <span class="side-name">Red</span>
-              <span class="side-detail">Goes First</span>
-            </button>
-            <button class="side-card side-yellow" data-side="2" id="side-yellow-btn">
-              <span class="side-piece yellow-piece"></span>
-              <span class="side-name">Yellow</span>
-              <span class="side-detail">Goes Second</span>
-            </button>
+    <!-- PostHog Analytics -->
+    <script>
+      !(function (t, e) {
+        var o, n, p, r;
+        e.__SV ||
+          ((window.posthog = e),
+          (e._i = []),
+          (e.init = function (i, s, a) {
+            function g(t, e) {
+              var o = e.split(".");
+              (2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                (t[e] = function () {
+                  t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+                }));
+            }
+            (((p = t.createElement("script")).type = "text/javascript"),
+              (p.crossOrigin = "anonymous"),
+              (p.async = !0),
+              (p.src =
+                s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") +
+                "/static/array.js"),
+              (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(
+                p,
+                r,
+              ));
+            var u = e;
+            for (
+              void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                u.people = u.people || [],
+                u.toString = function (t) {
+                  var e = "posthog";
+                  return (
+                    "posthog" !== a && (e += "." + a),
+                    t || (e += " (stub)"),
+                    e
+                  );
+                },
+                u.people.toString = function () {
+                  return u.toString(1) + ".people (stub)";
+                },
+                o =
+                  "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group reset groups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(
+                    " ",
+                  ),
+                n = 0;
+              n < o.length;
+              n++
+            )
+              g(u, o[n]);
+            e._i.push([i, s, a]);
+          }),
+          (e.__SV = 1));
+      })(document, window.posthog || []);
+
+      posthog.init("phc_txjWYf9Qjp8c2VCcPYLzMDTQjB4B7HCDD8BQvADCZmDx", {
+        api_host: "https://eu.i.posthog.com",
+        person_profiles: "always",
+      });
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header id="header">
+        <h1 class="logo">🐟 Marlin</h1>
+        <p class="subtitle">Perfect Connect 4 AI</p>
+        <a
+          href="https://github.com/victoribironke/marlin"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="github-link"
+        >
+          <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            ></path>
+          </svg>
+          View on GitHub
+        </a>
+      </header>
+
+      <!-- Setup Screen -->
+      <div id="setup-screen">
+        <div class="setup-card">
+          <h2 class="setup-title">New Game</h2>
+
+          <div class="setup-section">
+            <label class="setup-label">Choose Your Side</label>
+            <div class="side-selector">
+              <button
+                class="side-card side-red selected"
+                data-side="1"
+                id="side-red-btn"
+              >
+                <span class="side-piece red-piece"></span>
+                <span class="side-name">Red</span>
+                <span class="side-detail">Goes First</span>
+              </button>
+              <button
+                class="side-card side-yellow"
+                data-side="2"
+                id="side-yellow-btn"
+              >
+                <span class="side-piece yellow-piece"></span>
+                <span class="side-name">Yellow</span>
+                <span class="side-detail">Goes Second</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="setup-section">
+            <label class="setup-label">Difficulty</label>
+            <div class="difficulty-selector">
+              <button class="diff-btn" data-diff="easy" id="diff-easy-btn">
+                Easy
+              </button>
+              <button class="diff-btn" data-diff="medium" id="diff-medium-btn">
+                Medium
+              </button>
+              <button
+                class="diff-btn selected"
+                data-diff="hard"
+                id="diff-hard-btn"
+              >
+                Hard
+              </button>
+            </div>
+          </div>
+
+          <button id="start-btn" class="start-button">Start Game</button>
+        </div>
+      </div>
+
+      <!-- Game Screen -->
+      <div id="game-screen" class="hidden">
+        <div id="board-container">
+          <div class="board" id="board">
+            <!-- 7 columns, each with 6 cells (top=row5 to bottom=row0) -->
+            <div class="column" data-col="0">
+              <div class="cell" data-col="0" data-row="5"></div>
+              <div class="cell" data-col="0" data-row="4"></div>
+              <div class="cell" data-col="0" data-row="3"></div>
+              <div class="cell" data-col="0" data-row="2"></div>
+              <div class="cell" data-col="0" data-row="1"></div>
+              <div class="cell" data-col="0" data-row="0"></div>
+            </div>
+            <div class="column" data-col="1">
+              <div class="cell" data-col="1" data-row="5"></div>
+              <div class="cell" data-col="1" data-row="4"></div>
+              <div class="cell" data-col="1" data-row="3"></div>
+              <div class="cell" data-col="1" data-row="2"></div>
+              <div class="cell" data-col="1" data-row="1"></div>
+              <div class="cell" data-col="1" data-row="0"></div>
+            </div>
+            <div class="column" data-col="2">
+              <div class="cell" data-col="2" data-row="5"></div>
+              <div class="cell" data-col="2" data-row="4"></div>
+              <div class="cell" data-col="2" data-row="3"></div>
+              <div class="cell" data-col="2" data-row="2"></div>
+              <div class="cell" data-col="2" data-row="1"></div>
+              <div class="cell" data-col="2" data-row="0"></div>
+            </div>
+            <div class="column" data-col="3">
+              <div class="cell" data-col="3" data-row="5"></div>
+              <div class="cell" data-col="3" data-row="4"></div>
+              <div class="cell" data-col="3" data-row="3"></div>
+              <div class="cell" data-col="3" data-row="2"></div>
+              <div class="cell" data-col="3" data-row="1"></div>
+              <div class="cell" data-col="3" data-row="0"></div>
+            </div>
+            <div class="column" data-col="4">
+              <div class="cell" data-col="4" data-row="5"></div>
+              <div class="cell" data-col="4" data-row="4"></div>
+              <div class="cell" data-col="4" data-row="3"></div>
+              <div class="cell" data-col="4" data-row="2"></div>
+              <div class="cell" data-col="4" data-row="1"></div>
+              <div class="cell" data-col="4" data-row="0"></div>
+            </div>
+            <div class="column" data-col="5">
+              <div class="cell" data-col="5" data-row="5"></div>
+              <div class="cell" data-col="5" data-row="4"></div>
+              <div class="cell" data-col="5" data-row="3"></div>
+              <div class="cell" data-col="5" data-row="2"></div>
+              <div class="cell" data-col="5" data-row="1"></div>
+              <div class="cell" data-col="5" data-row="0"></div>
+            </div>
+            <div class="column" data-col="6">
+              <div class="cell" data-col="6" data-row="5"></div>
+              <div class="cell" data-col="6" data-row="4"></div>
+              <div class="cell" data-col="6" data-row="3"></div>
+              <div class="cell" data-col="6" data-row="2"></div>
+              <div class="cell" data-col="6" data-row="1"></div>
+              <div class="cell" data-col="6" data-row="0"></div>
+            </div>
           </div>
         </div>
 
-        <div class="setup-section">
-          <label class="setup-label">Difficulty</label>
-          <div class="difficulty-selector">
-            <button class="diff-btn" data-diff="easy" id="diff-easy-btn">Easy</button>
-            <button class="diff-btn" data-diff="medium" id="diff-medium-btn">Medium</button>
-            <button class="diff-btn selected" data-diff="hard" id="diff-hard-btn">Hard</button>
+        <div id="status-bar">
+          <div id="turn-indicator">
+            <span class="turn-dot"></span>
+            <span id="status-text">Your turn</span>
           </div>
+          <div id="thinking-indicator" class="hidden">
+            <span>Marlin is thinking</span>
+            <div class="thinking-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+          <div id="result-text" class="hidden"></div>
         </div>
 
-        <button id="start-btn" class="start-button">Start Game</button>
+        <div id="controls">
+          <button id="new-game-btn" class="new-game-button">New Game</button>
+        </div>
+      </div>
+
+      <!-- Game Over Overlay -->
+      <div id="game-over-overlay" class="hidden">
+        <div class="overlay-content">
+          <div id="overlay-icon"></div>
+          <h2 id="overlay-title"></h2>
+          <p id="overlay-subtitle"></p>
+          <button id="overlay-new-game-btn" class="start-button">
+            Play Again
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Game Screen -->
-    <div id="game-screen" class="hidden">
-      <div id="board-container">
-        <div class="board" id="board">
-          <!-- 7 columns, each with 6 cells (top=row5 to bottom=row0) -->
-          <div class="column" data-col="0">
-            <div class="cell" data-col="0" data-row="5"></div>
-            <div class="cell" data-col="0" data-row="4"></div>
-            <div class="cell" data-col="0" data-row="3"></div>
-            <div class="cell" data-col="0" data-row="2"></div>
-            <div class="cell" data-col="0" data-row="1"></div>
-            <div class="cell" data-col="0" data-row="0"></div>
-          </div>
-          <div class="column" data-col="1">
-            <div class="cell" data-col="1" data-row="5"></div>
-            <div class="cell" data-col="1" data-row="4"></div>
-            <div class="cell" data-col="1" data-row="3"></div>
-            <div class="cell" data-col="1" data-row="2"></div>
-            <div class="cell" data-col="1" data-row="1"></div>
-            <div class="cell" data-col="1" data-row="0"></div>
-          </div>
-          <div class="column" data-col="2">
-            <div class="cell" data-col="2" data-row="5"></div>
-            <div class="cell" data-col="2" data-row="4"></div>
-            <div class="cell" data-col="2" data-row="3"></div>
-            <div class="cell" data-col="2" data-row="2"></div>
-            <div class="cell" data-col="2" data-row="1"></div>
-            <div class="cell" data-col="2" data-row="0"></div>
-          </div>
-          <div class="column" data-col="3">
-            <div class="cell" data-col="3" data-row="5"></div>
-            <div class="cell" data-col="3" data-row="4"></div>
-            <div class="cell" data-col="3" data-row="3"></div>
-            <div class="cell" data-col="3" data-row="2"></div>
-            <div class="cell" data-col="3" data-row="1"></div>
-            <div class="cell" data-col="3" data-row="0"></div>
-          </div>
-          <div class="column" data-col="4">
-            <div class="cell" data-col="4" data-row="5"></div>
-            <div class="cell" data-col="4" data-row="4"></div>
-            <div class="cell" data-col="4" data-row="3"></div>
-            <div class="cell" data-col="4" data-row="2"></div>
-            <div class="cell" data-col="4" data-row="1"></div>
-            <div class="cell" data-col="4" data-row="0"></div>
-          </div>
-          <div class="column" data-col="5">
-            <div class="cell" data-col="5" data-row="5"></div>
-            <div class="cell" data-col="5" data-row="4"></div>
-            <div class="cell" data-col="5" data-row="3"></div>
-            <div class="cell" data-col="5" data-row="2"></div>
-            <div class="cell" data-col="5" data-row="1"></div>
-            <div class="cell" data-col="5" data-row="0"></div>
-          </div>
-          <div class="column" data-col="6">
-            <div class="cell" data-col="6" data-row="5"></div>
-            <div class="cell" data-col="6" data-row="4"></div>
-            <div class="cell" data-col="6" data-row="3"></div>
-            <div class="cell" data-col="6" data-row="2"></div>
-            <div class="cell" data-col="6" data-row="1"></div>
-            <div class="cell" data-col="6" data-row="0"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="status-bar">
-        <div id="turn-indicator">
-          <span class="turn-dot"></span>
-          <span id="status-text">Your turn</span>
-        </div>
-        <div id="thinking-indicator" class="hidden">
-          <span>Marlin is thinking</span>
-          <div class="thinking-dots">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-        </div>
-        <div id="result-text" class="hidden"></div>
-      </div>
-
-      <div id="controls">
-        <button id="new-game-btn" class="new-game-button">New Game</button>
-      </div>
-    </div>
-
-    <!-- Game Over Overlay -->
-    <div id="game-over-overlay" class="hidden">
-      <div class="overlay-content">
-        <div id="overlay-icon"></div>
-        <h2 id="overlay-title"></h2>
-        <p id="overlay-subtitle"></p>
-        <button id="overlay-new-game-btn" class="start-button">Play Again</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="marlin.js"></script>
-  <script src="app.js"></script>
-</body>
+    <script src="marlin.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
