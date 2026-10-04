@@ -47,6 +47,8 @@ function cacheDom() {
   dom.overlayTitle = document.getElementById('overlay-title');
   dom.overlaySubtitle = document.getElementById('overlay-subtitle');
   dom.overlayNewGameBtn = document.getElementById('overlay-new-game-btn');
+  dom.metaDifficulty = document.getElementById('meta-difficulty');
+  dom.metaMoves = document.getElementById('meta-moves');
 
   dom.sideRedBtn = document.getElementById('side-red-btn');
   dom.sideYellowBtn = document.getElementById('side-yellow-btn');
@@ -393,7 +395,14 @@ function clearHoverPreview() {
 
 // ---- Status Updates ----
 
+function updateMeta() {
+  const diff = gameState.difficulty;
+  dom.metaDifficulty.textContent = diff.charAt(0).toUpperCase() + diff.slice(1);
+  dom.metaMoves.textContent = `Move ${api ? api.nbMoves() : 0}`;
+}
+
 function updateStatus() {
+  updateMeta();
   if (gameState.isGameOver) return;
 
   if (gameState.isAiThinking) {
@@ -415,7 +424,7 @@ function updateStatus() {
       const color = aiPlayer === 1 ? 'red' : 'yellow';
       dom.turnDot.className = 'turn-dot';
       if (color === 'yellow') dom.turnDot.classList.add('yellow');
-      dom.statusText.textContent = "AI's turn";
+      dom.statusText.textContent = 'Marlin’s turn';
     }
   }
 }
@@ -424,6 +433,7 @@ function updateStatus() {
 
 function showResult(result, player) {
   gameState.isGameOver = true;
+  updateMeta();
 
   // Update status bar
   dom.turnIndicator.classList.add('hidden');
@@ -436,22 +446,22 @@ function showResult(result, player) {
   let overlaySubtitle = '';
 
   if (result === 'win') {
-    message = '🎉 You win!';
+    message = 'You win.';
     dom.resultText.className = 'win';
-    overlayIcon = '🏆';
-    overlayTitle = 'You Win!';
+    overlayIcon = 'Victory';
+    overlayTitle = 'You win.';
     overlaySubtitle = 'Incredible! You outsmarted the AI.';
   } else if (result === 'lose') {
-    message = '🐟 Marlin wins!';
+    message = 'Marlin wins.';
     dom.resultText.className = 'lose';
-    overlayIcon = '🐟';
-    overlayTitle = 'Marlin Wins!';
+    overlayIcon = 'Defeat';
+    overlayTitle = 'Marlin wins.';
     overlaySubtitle = 'The AI found the winning strategy. Try again!';
   } else {
-    message = "🤝 It's a draw!";
+    message = 'Draw.';
     dom.resultText.className = 'draw';
-    overlayIcon = '🤝';
-    overlayTitle = "It's a Draw!";
+    overlayIcon = 'Stalemate';
+    overlayTitle = 'Draw.';
     overlaySubtitle = 'A well-fought battle. Neither side could win.';
   }
 
@@ -462,6 +472,7 @@ function showResult(result, player) {
   dom.overlayIcon.textContent = overlayIcon;
   dom.overlayTitle.textContent = overlayTitle;
   dom.overlaySubtitle.textContent = overlaySubtitle;
+  dom.overlay.dataset.result = result;
   dom.overlay.classList.remove('hidden');
 
   // Track game over
